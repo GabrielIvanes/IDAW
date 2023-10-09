@@ -3,16 +3,75 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="style.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+
     <title>Projets</title>
   </head>
   <body>
-    <div>projets</div>
-    <nav class="menu">
-      <ul>
-        <li><a href="index.html">Accueil</a></li>
-        <li><a href="cv.html">CV</a></li>
-        <li><a href="hobbies.html">Hobbies</a></li>
-      </ul>
-    </nav>
+    <header>
+      <h1>Projets</h1>
+    </header>
+
+    <hr />
+    <div class="main">
+      <nav class="menu">
+        <ul>
+          <li><a href="index.html">Accueil</a></li>
+          <li><a href="cv.html">CV</a></li>
+          <li><a id="currentpage" href="projets.html">Projets</a></li>
+        </ul>
+      </nav>
+      <div class="contenu">
+        <div class="projet">
+          <h2>PortFolio</h2>
+          <h2>Tech stack: HTML, CSS, JS</h2>
+          <p>Creation of my own portfolio website.</p>
+          <br />
+          <img src="assets/portfolio.png" alt="portfolio" />
+        </div>
+        <div class="projet">
+          <h1>Movie App</h1>
+          <h2>Tech stack: MERN (MongoDB, Express, Node.JS, React)</h2>
+          <p>
+            Creation of a full stack app to create list of films and search for
+            movies, actors, tv show, directors, ...
+          </p>
+          <img src="assets/movieApp.png" alt="movieApp" />
+        </div>
+        <div class="projet">
+          <h1>Weather app</h1>
+          <h2>Tech stack: HTML, CSS, JS, API</h2>
+          <p>
+            Creation of an app displaying the weather of a location given in an
+            input with google map API for the auto complete.
+          </p>
+          <a href="https://github.com/GabrielIvanes/meteo"
+            ><i class="fab fa-github fa-2x"></i
+          ></a>
+          <br />
+          <img src="assets/meteo.png" alt="meteo" />
+        </div>
+        <div class="projet">
+          <h1>Games</h1>
+          <h2>Tech stack: HTML, CSS, JS</h2>
+          <p>
+            Creation of games to improve my skills in basic language (Sudoku
+            generator, connect four, 2048, ...)
+          </p>
+          <a
+            href="https://github.com/GabrielIvanes?tab=repositories"
+            class="github"
+            ><i class="fab fa-github fa-2x"></i
+          ></a>
+        </div>
+      </div>
+    </div>
+    <footer>
+      <p>&copy; 2023 Gabriel Ivanes. Tous droits réservés.</p>
+    </footer>
   </body>
 </html>
