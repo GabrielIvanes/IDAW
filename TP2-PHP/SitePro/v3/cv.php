@@ -55,7 +55,7 @@
     <div class="cerballiance">
         <?php echo $lang === 'en' ? "<h2>
             Company discovery internship <strong>Cerballiance</strong>
-        </h2>" : "<h2>Stage de découverte de l'entreprise<strong>Cerballiance</strong></h2>" ?>
+        </h2>" : "<h2>Stage de découverte de l'entreprise <strong>Cerballiance</strong></h2>" ?>
         <?php echo $lang === 'en' ? "<h3>February 2021 - April 2021</h3>" : "<h3>Février 2021 - Avril 2021</h3>" ?>
         <ul class="text-experiences-ul">
             <?php echo $lang === 'en' ? "<li>
