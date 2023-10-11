@@ -7,7 +7,7 @@
 
     <div class="imtne">
         <?php echo $lang === 'en' ? "<h2>
-            Second year of engineering school" : "Deuxième année d'école d'ingénieur"?>
+            Second year of engineering school" : "<h2>Deuxième année d'école d'ingénieur"?>
         <strong>Institut Mines-Télécom Nord Europe</strong>
         </h2>
         <?php echo $lang === 'en' ? "<h3>September 2022 - Present</h3>" : "<h3>Septembre 2022 - Aujourd'hui</h3>"?>
