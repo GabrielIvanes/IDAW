@@ -55,7 +55,12 @@ echo $lang === 'fr' ? "<img src='./assets/united-kingdom.png' alt='united kingdo
 
         <?php
 $currentPageIdMaj = ucfirst($currentPageId);
- echo '<h1 class="page-title">'.$currentPageIdMaj.'</h1>'?>
+if ($currentPageId !== 'home' && $currentPageId !== 'accueil' && $currentPageId !== 'cv' && $currentPageId !== 'contact' && $currentPageId !== 'projets' && $currentPageId !== 'projects') {
+  echo '<h1 class="page-title">ERROR</h1>';
+} else {
+ echo '<h1 class="page-title">'.$currentPageIdMaj.'</h1>';
+
+        }?>
 
         <hr />
         <section class="corps">
