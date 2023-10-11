@@ -46,7 +46,7 @@ nav {
   margin-right: 10px;
   display: flex;
   flex-direction: column;
-  margin-top: 10px;
+  padding-top: 10px;
   margin-left: 50px;
 }
 .contenu > div {
@@ -138,7 +138,7 @@ nav a:hover {
   color: white;
 }
 .cv {
-  margin-top: 20px;
+  padding-top: 20px;
   display: flex;
   justify-content: center;
 }
@@ -155,4 +155,12 @@ nav a:hover {
 .cv a:hover {
   background-color: black;
   color: white;
+}
+.corps {
+  width: 100%;
+  min-height: 451.5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }

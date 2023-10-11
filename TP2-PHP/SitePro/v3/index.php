@@ -58,7 +58,6 @@ $currentPageIdMaj = ucfirst($currentPageId);
  echo '<h1 class="page-title">'.$currentPageIdMaj.'</h1>'?>
 
         <hr />
-
         <section class="corps">
             <?php
             $currentPageIdFr !== null ?  $pageToInclude = $currentPageIdFr. ".php" : $pageToInclude = $currentPageId. ".php";
