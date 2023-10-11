@@ -5,3 +5,11 @@
     </select>
     <input type="submit" value="Appliquer" />
 </form>
+
+<?php 
+
+if (isset($_GET['css'])) {
+    setcookie('style', $_GET['css']);
+}
+
+?>
