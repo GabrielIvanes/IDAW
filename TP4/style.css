@@ -1,0 +1,14 @@
+.icon {
+  cursor: pointer;
+  margin: 0 3px;
+}
+#update button,
+#delete button {
+  background-color: transparent;
+  border: none;
+}
+
+form#user input#name,
+form#user input#email {
+  width: 300px;
+}
