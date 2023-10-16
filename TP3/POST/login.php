@@ -5,7 +5,7 @@
     if (isset($_GET['css'])) {
         setcookie('style', $_GET['css']);
     }
-    if ($_GET['css'] === 'style1') {
+    if (isset($_GET['css']) && $GET['css'] === 'style1') {
         $css = '<link rel="stylesheet" href="style1.css">';
     } else {
         $css = '<link rel="stylesheet" href="style2.css">';
