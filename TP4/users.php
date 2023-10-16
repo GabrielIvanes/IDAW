@@ -12,6 +12,7 @@
 
 <body>
     <?php
+    require_once('./exo3/init_db.php');
     require_once('config.php');
 
     $isUpdatingUser = false;
