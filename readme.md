@@ -1,249 +1,97 @@
-```json
-{
-  "openapi": "3.0.3",
-  "info": {
-    "title": "User API",
-    "description": "C'est une simple API permettant de réaliser les fonctionnalités simples CRUD sur une table de users avec PHP et MYSQL.",
-    "contact": {
-      "email": "gabriel.ivanes@etu.imt-nord-europe.fr"
-    },
-    "version": "1.0.0"
-  },
-  "servers": [
-    {
-      "url": "http://localhost/IDAW/TP4/API_REST/api/user"
-    }
-  ],
-  "tags": [
-    {
-      "name": "user",
-      "description": "CRUD sur les users"
-    }
-  ],
-  "paths": {
-    "/create.php": {
-      "post": {
-        "tags": ["user"],
-        "summary": "Crée un utilisateur",
-        "description": "Crée un utilisateur avec les informations données en entrée",
-        "parameters": [
-          {
-            "name": "user",
-            "in": "query",
-            "description": "Le nom d'utilisateur",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "email",
-            "in": "query",
-            "description": "L'email de l'utilisateur",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Opération réussie"
-          },
-          "400": {
-            "description": "Data incomplète"
-          },
-          "503": {
-            "description": "Problème serveur"
-          }
-        }
-      }
-    },
-    "/read.php": {
-      "get": {
-        "tags": ["user"],
-        "summary": "Récupérer tous les utilisateurs",
-        "description": "Récupère tous les utilisateurs de la base de donnée",
-        "responses": {
-          "200": {
-            "description": "Opération réussie"
-          },
-          "404": {
-            "description": "Aucun utilisateur trouvé"
-          }
-        }
-      }
-    },
-    "/read_one.php?id={id}": {
-      "get": {
-        "tags": ["user"],
-        "summary": "Récupérer un utilisateur",
-        "description": "Récupère un utilisateur à partir de son id.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "L'id de l'utilisateur",
-            "required": true,
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Opération réussie"
-          },
-          "404": {
-            "description": "L'utilisateur n'existe pas"
-          }
-        }
-      }
-    },
-    "/read_paging.php?page={page}": {
-      "get": {
-        "tags": ["user"],
-        "summary": "Pagination de la liste des utilisateurs",
-        "description": "Pagination de la liste des utilisateurs et récupération de la liste des utilisateurs d'une page.",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "path",
-            "description": "Numéro de la page",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Opération réussie"
-          },
-          "404": {
-            "description": "Pas d'utilisateur trouvé"
-          }
-        }
-      }
-    },
-    "/update.php": {
-      "put": {
-        "tags": ["user"],
-        "summary": "Modifier l'utilisateur",
-        "description": "Modifie l'utilisateur avec les données entrées dans le body.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "query",
-            "description": "Id de l'utilisateur à modifier",
-            "required": true,
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "description": "Nom d'utilisateur",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "email",
-            "in": "query",
-            "description": "Email de l'utilisateur",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Opération réussie"
-          },
-          "503": {
-            "description": "Problème serveur"
-          }
-        }
-      }
-    },
-    "/delete.php": {
-      "delete": {
-        "tags": ["user"],
-        "summary": "Supprimer l'utilisateur",
-        "description": "Supprime l'utilisateur donné dans le body",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "query",
-            "description": "Id de l'utilisateur à supprimer",
-            "required": true,
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Opération réussie"
-          },
-          "503": {
-            "description": "Problème serveur"
-          }
-        }
-      }
-    },
-    "/search.php?name={motCle}": {
-      "get": {
-        "tags": ["user"],
-        "summary": "Chercher un ou plusieurs utilisateurs en fonction d'un mot clé",
-        "description": "Cherche un ou plusieurs utilisateurs en fontion du mot clé inscrit dans la requête.",
-        "parameters": [
-          {
-            "name": "motCle",
-            "in": "path",
-            "description": "nom d'utilisateur (complet ou non)",
-            "required": false,
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Opération réussie"
-          },
-          "404": {
-            "description": "Aucun utilisateur trouvé"
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "User": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64",
-            "example": 10
-          },
-          "name": {
-            "type": "string",
-            "example": "John"
-          },
-          "email": {
-            "type": "string",
-            "example": "john@email.com"
-          }
-        }
-      }
-    }
-  }
-}
-```
+Description: API permettant de réaliser les fonctionnalités simples CRUD sur une table de users avec PHP et MYSQL.
+URL du serveur: http://localhost/IDAW/TP4/exo5/api/user
+
+Endpoints:
+
+- /create.php: Permet de créer un utilisateur
+
+  Méthode: POST
+
+  Paramètres:
+
+  - name: nom de l'utilisateur à ajouter dans le corps de la requête de type string. Paramètre obligatoire
+  - email: email de l'utilisateur à ajouter dans le corps de la requête de type string. Paramètre obligatoire
+
+  Réponses:
+
+  - "200": Utilisateur créé avec succès.
+  - "400": Data incomplète.
+  - "503": Problème serveur.
+
+- /read.php: Permet de récupérer l'ensemble des utilisateurs
+
+  Méthode: GET
+
+  Paramètres: aucun
+
+  Réponses:
+
+  - "200": Listes des utilisateurs diponibles.
+  - "404": Aucun utilisateur trouvé.
+
+- /read_one.php?id={id}: Permet de récupérer 1 utilisateur donné en paramètre.
+
+  Méthode: GET
+
+  Paramètres:
+
+  - id: id de l'utilisateur à ajouter dans l'url de la requête. Paramètre obligatoire
+
+  Réponses:
+
+  - "200": Utilisateur retourné.
+  - "404": L'utilisateur n'existe pas.
+
+- /read_pagin.php?page={page}: Permet de récupérer une pagination de la liste des utilisateurs.
+
+  Méthode: GET
+
+  Paramètres:
+
+  - page: page demandée à ajouter dans l'url de la requête. Paramètre non obligatoire.
+
+  Réponses:
+
+  - "200": Pagination des utilisateurs retournée.
+  - "404": Pas d'utilisateur trouvé.
+
+- /update.php: Permet de modifier un utilisateur.
+
+  Méthode: PUT
+
+  Paramètres:
+
+  - id: Id de l'utilisateur à modifier à ajouter dans le corps de la requête de type number. Paramètre obligatoire.
+  - name: Nom de l'utilisateur à modifier à ajouter dans le corps de la requête de type string. Paramètre obligatoire.
+  - email: Email de l'utilisateur à modifier à ajouter dans le corps de la requête de type string. paramètre obligatoire.
+
+  Réponses:
+
+  - "200": Utilisateur modifié.
+  - "503": Problème serveur.
+
+- /delete.php: Permet de supprimer un utilisateur.
+
+  Méthode: DELETE
+
+  Paramètres:
+
+  - id: Id de l'utilisateur à supprimer à ajouter dans le corps de la requête de type number. paramètre obligatoire.
+
+  Réponses:
+
+  - "200": Utilisateur supprimé.
+  - "503": Problème serveur.
+
+- /search.php?name={motCle}: Permet de chercher un utilisateur par un mot clé reflétant le nom d'utilisateur.
+
+  Méthode: GET
+
+  Paramètres:
+
+  - motCle: mot clé permettant de faire une recherche sur les noms d'utilisateur à ajouter dans l'url de la requête de type string. Paramètre non obligatoire.
+
+  Réponses:
+
+  - "200": Liste des utilisateurs dont leur nom contient le mot clé.
+  - "404": Aucun utilisateur trouvé.
