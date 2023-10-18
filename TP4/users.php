@@ -52,8 +52,8 @@
             echo "<td>" . $user['id'] . "</td>";
             echo "<td>" . $user['name'] . "</td>";
             echo "<td>" . $user['email'] . "</td>";
-            echo "<td><form method='POST' action='users.php' id='update'><input name='id' type='hidden' value='".$user['id']."' /><input name='name' type='hidden' value='".$user['name']."' /><input name='email' type='hidden' value='".$user['email']."' /><button type='submit'><i class='fas fa-pen-to-square icon'></i></button></form></td>";
-            echo "<td><form method='POST' action='./CRUD/delete.php' id='delete'><input name='id' type='hidden' value='".$user['id']."' /><button type='submit'><i class='fas fa-trash icon'></i></button></form></td>";
+            echo "<td><form method='PUT' action='users.php' id='update'><input name='id' type='hidden' value='".$user['id']."' /><input name='name' type='hidden' value='".$user['name']."' /><input name='email' type='hidden' value='".$user['email']."' /><button type='submit'><i class='fas fa-pen-to-square icon'></i></button></form></td>";
+            echo "<td><form method='DELETE' action='./CRUD/delete.php' id='delete'><input name='id' type='hidden' value='".$user['id']."' /><button type='submit'><i class='fas fa-trash icon'></i></button></form></td>";
             echo "</tr>";
 
         }

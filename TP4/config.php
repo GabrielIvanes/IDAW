@@ -6,4 +6,4 @@
     define('_MYSQL_PASSWORD','');
 
 
-    $ROOT_API = "C:\\wamp64\\www\\IDAW\\TP4\\API_REST\\";
+    $ROOT_API = "C:\\wamp64\\www\\IDAW\\TP4\\exo5\\";

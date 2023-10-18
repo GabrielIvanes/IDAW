@@ -5,7 +5,7 @@ class Utilities{
   
         $paging_arr=array();
 
-        $paging_arr["first"] = $page>1 ? "{$page_url}page=1" : "";
+        $paging_arr["first"] = $page > 1 ? "{$page_url}page=1" : "";
   
         $total_pages = ceil($total_rows / $records_per_page);
   
@@ -14,10 +14,10 @@ class Utilities{
         $initial_num = $page - $range;
         $condition_limit_num = ($page + $range)  + 1;
   
-        $paging_arr['pages']=array();
-        $page_count=0;
+        $paging_arr['pages'] = array();
+        $page_count = 0;
           
-        for($x=$initial_num; $x<$condition_limit_num; $x++){
+        for($x = $initial_num; $x < $condition_limit_num; $x++){
 
             if(($x > 0) && ($x <= $total_pages)){
                 $paging_arr['pages'][$page_count]["page"]=$x;

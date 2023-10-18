@@ -67,12 +67,21 @@ class User {
         $stmt->bindParam(':name', $this->name);
         $stmt->bindParam(':email', $this->email);
         $stmt->bindParam(':id', $this->id);
-    
-        if($stmt->execute()){
-            return true;
+
+        $queryIsIn = "SELECT * FROM users WHERE id = :idIsIn";
+        $request = $this->pdo->prepare($queryIsIn);
+        $request->bindParam(':idIsIn', $this->id);
+        
+        if ($request->execute() && $request->rowCount() > 0) {
+            if($stmt->execute()){
+                return true;
+            } else{
+            return false;
+            }
+        } else {
+            return false;
         }
-    
-        return false;
+
     }
 
     function delete(){
@@ -109,12 +118,10 @@ class User {
     }
     public function readPaging($from_record_num, $records_per_page){
 
-        $query = "SELECT * FROM users LIMIT :numPage, :numValues";
+        $query = "SELECT * FROM users LIMIT :firstPage, :lastPage";
     
-        // prepare query statement
         $stmt = $this->pdo->prepare( $query );
     
-        // bind variable values
         $stmt->bindParam(":numPage", $from_record_num, PDO::PARAM_INT);
         $stmt->bindParam(":numValues", $records_per_page, PDO::PARAM_INT);
     

@@ -4,7 +4,6 @@ header("Content-Type: application/json; charset=UTF-8");
 
 require_once("../../../config.php");
 
-// require_once ($ROOT_API.'core.php');
 require_once($ROOT_API.'database.php');
 require_once($ROOT_API.'api\\objects\\user.php');
   
