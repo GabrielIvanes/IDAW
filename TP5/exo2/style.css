@@ -1,0 +1,19 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body > div {
+  margin: 0 20px 0 20px;
+}
+tbody > tr > :nth-child(4) {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 100%;
+}
+.delete button,
+.update button {
+  background-color: transparent;
+  border: none;
+}

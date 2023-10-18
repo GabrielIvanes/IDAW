@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.7.0.js"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v6.1.0/css/all.css"
+    />
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
+    />
+    <link rel="stylesheet" href="style.css">
+    <script
+      type="text/javascript"
+      charset="utf8"
+      src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"
+    ></script>
+
+    <title>tabletest</title>
+    <style>
+      body {
+        margin-top: 5em;
+      }
+      .table {
+        margin: 100px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <table class="display" id="myTable">
+      <thead>
+        <tr>
+          <th scope="col">Id</th>
+          <th scope="col">Nom</th>
+          <th scope="col">Email</th>
+          <th scope="col" class="text-center">CRUD</th>
+        </tr>
+      </thead>
+      <tbody id="studentsTableBody"></tbody>
+    </table>
+    <form
+      id="addStudentForm"
+      action=""
+      onsubmit="onFormSubmit(event);"
+      style="margin-left: 30px"
+    >
+      <div class="form-group row" style="width: 100%">
+        <label for="inputName" class="col-sm-2 col-form-label">Nom*</label>
+        <div class="col-sm-3">
+          <input type="text" class="form-control" id="inputName" required />
+        </div>
+      </div>
+       <div class="form-group row" style="width: 100%">
+        <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
+        <div class="col-sm-3">
+          <input type="email" class="form-control" id="inputEmail" required/>
+        </div>
+      </div>
+      </div>
+
+      <div class="form-group row" style="width: 100%">
+        <span class="col-sm-2"></span>
+        <div class="col-sm-2">
+          <button type="submit" class="btn btn-primary form-control">
+            Submit
+          </button>
+        </div>
+      </div>
+    </form>
+    <script src="jscrud.js"></script>
+  </body>
+</html>
