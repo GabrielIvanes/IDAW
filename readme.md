@@ -1,4 +1,5 @@
 Description: API permettant de réaliser les fonctionnalités simples CRUD sur une table de users avec PHP et MYSQL.
+
 URL du serveur: http://localhost/IDAW/TP4/exo5/api/user
 
 Endpoints:
