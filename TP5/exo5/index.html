@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <title>Chess</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="style.css" rel="stylesheet" />
+    <script
+      src="https://code.jquery.com/jquery-3.7.0.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <table class="chess-board">
+        <tr>
+          <th></th>
+          <th>A</th>
+          <th>B</th>
+          <th>C</th>
+          <th>D</th>
+          <th>E</th>
+          <th>F</th>
+          <th>G</th>
+          <th>H</th>
+        </tr>
+        <tr>
+          <th>1</th>
+          <th class="even" id="case0" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case1" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case2" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case3" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case4" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case5" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case6" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case7" onclick="handleClickTh(event);"></th>
+        </tr>
+        <tr>
+          <th>2</th>
+          <th class="odd" id="case8" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case9" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case10" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case11" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case12" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case13" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case14" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case15" onclick="handleClickTh(event);"></th>
+        </tr>
+        <tr>
+          <th>3</th>
+          <th class="even" id="case16" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case17" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case18" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case19" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case20" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case21" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case22" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case23" onclick="handleClickTh(event);"></th>
+        </tr>
+        <tr>
+          <th>4</th>
+          <th class="odd" id="case24" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case25" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case26" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case27" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case28" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case29" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case30" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case31" onclick="handleClickTh(event);"></th>
+        </tr>
+        <tr>
+          <th>5</th>
+          <th class="even" id="case32" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case33" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case34" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case35" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case36" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case37" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case38" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case39" onclick="handleClickTh(event);"></th>
+        </tr>
+        <tr>
+          <th>6</th>
+          <th class="odd" id="case40" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case41" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case42" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case43" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case44" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case45" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case46" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case47" onclick="handleClickTh(event);"></th>
+        </tr>
+        <tr>
+          <th>7</th>
+          <th class="even" id="case48" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case49" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case50" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case51" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case52" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case53" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case54" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case55" onclick="handleClickTh(event);"></th>
+        </tr>
+        <tr>
+          <th>8</th>
+          <th class="odd" id="case56" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case57" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case58" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case59" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case60" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case61" onclick="handleClickTh(event);"></th>
+          <th class="odd" id="case62" onclick="handleClickTh(event);"></th>
+          <th class="even" id="case63" onclick="handleClickTh(event);"></th>
+        </tr>
+      </table>
+    </div>
+    <script src="index.js"></script>
+  </body>
+</html>
