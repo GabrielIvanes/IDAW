@@ -13,6 +13,7 @@ let possibleMoves = [];
 let dangerPossibleMoves = [];
 let isCheckingDanger = false;
 let currentCase = '';
+let teamToMove = 1;
 
 let isKingSideCastlingWhitePossible = true; // petit roque blanc
 let isKingSideCastlingBlackPossible = true; // petit roque noir
@@ -148,8 +149,18 @@ function handleClickTh(event) {
     currentPiece = getPiece(chessBoard[currentRow][currentCol]);
     currentTeam = getTeam(chessBoard[currentRow][currentCol]);
 
+    const pieceTaken = getPiece(chessBoard[row][col]);
+
     chessBoard[row][col] = chessBoard[currentRow][currentCol];
     chessBoard[currentRow][currentCol] = 0;
+    if (pieceTaken === 6) {
+      console.log(team);
+      teamToMove = 0;
+
+      window.alert(`${currentTeam === 1 ? 'White' : 'Black'} have won`);
+    }
+
+    teamToMove = teamToMove !== 0 && (teamToMove === 1 ? 2 : 1);
 
     /** Permet de gérer le roque:
      *  - Annulation du roque dans le cas d'un mouvement d'une des tours ou du roi
@@ -190,7 +201,9 @@ function handleClickTh(event) {
   } else {
     currentCase = '';
     possibleMoves = [];
-    isAllowedToPlay(piece, row, col, team);
+    if (team === teamToMove) {
+      isAllowedToPlay(piece, row, col, team);
+    }
   }
 }
 
@@ -344,7 +357,7 @@ function isAllowedToPlayBackRight(row, col, opposingTeam) {
 function isAllowedToPlay(piece, row, col, team) {
   const opposingTeam = team === 1 ? 2 : 1;
 
-  if (chessBoard[row][col] !== 0 && !isCheckingDanger) {
+  if (chessBoard[row][col] !== 0 && !isCheckingDanger && teamToMove === team) {
     currentCase = $(document).find(`#case${row * 8 + col}`);
     currentCase.css('background-color', 'lightgrey');
   }
@@ -900,7 +913,10 @@ function isAllowedToPlay(piece, row, col, team) {
     case 6:
       const nbCase = row * 8 + col;
 
-      if (isAllowedToPlayFrontRight(row, col, opposingTeam)) {
+      if (
+        teamToMove === team &&
+        isAllowedToPlayFrontRight(row, col, opposingTeam)
+      ) {
         const kingCase = $(document).find(`#case${nbCase}`);
 
         currentCase = kingCase;
@@ -913,7 +929,10 @@ function isAllowedToPlay(piece, row, col, team) {
         nbChoicePossible++;
       }
 
-      if (isAllowedToPlayFrontLeft(row, col, opposingTeam)) {
+      if (
+        teamToMove === team &&
+        isAllowedToPlayFrontLeft(row, col, opposingTeam)
+      ) {
         const kingCase = $(document).find(`#case${nbCase}`);
 
         currentCase = kingCase;
@@ -926,7 +945,10 @@ function isAllowedToPlay(piece, row, col, team) {
         nbChoicePossible++;
       }
 
-      if (isAllowedToPlayBackRight(row, col, opposingTeam)) {
+      if (
+        teamToMove === team &&
+        isAllowedToPlayBackRight(row, col, opposingTeam)
+      ) {
         const kingCase = $(document).find(`#case${nbCase}`);
 
         currentCase = kingCase;
@@ -939,7 +961,10 @@ function isAllowedToPlay(piece, row, col, team) {
         nbChoicePossible++;
       }
 
-      if (isAllowedToPlayBackLeft(row, col, opposingTeam)) {
+      if (
+        teamToMove === team &&
+        isAllowedToPlayBackLeft(row, col, opposingTeam)
+      ) {
         const kingCase = $(document).find(`#case${nbCase}`);
 
         currentCase = kingCase;
@@ -952,7 +977,7 @@ function isAllowedToPlay(piece, row, col, team) {
         nbChoicePossible++;
       }
 
-      if (isAllowedToPlayRight(row, col, opposingTeam)) {
+      if (teamToMove === team && isAllowedToPlayRight(row, col, opposingTeam)) {
         const kingCase = $(document).find(`#case${nbCase}`);
 
         currentCase = kingCase;
@@ -965,7 +990,7 @@ function isAllowedToPlay(piece, row, col, team) {
         nbChoicePossible++;
       }
 
-      if (isAllowedToPlayLeft(row, col, opposingTeam)) {
+      if (teamToMove === team && isAllowedToPlayLeft(row, col, opposingTeam)) {
         const kingCase = $(document).find(`#case${nbCase}`);
 
         currentCase = kingCase;
@@ -977,7 +1002,7 @@ function isAllowedToPlay(piece, row, col, team) {
         nbChoicePossible++;
       }
 
-      if (isAllowedToPlayFront(row, col, opposingTeam)) {
+      if (teamToMove === team && isAllowedToPlayFront(row, col, opposingTeam)) {
         const kingCase = $(document).find(`#case${nbCase}`);
 
         currentCase = kingCase;
@@ -990,7 +1015,7 @@ function isAllowedToPlay(piece, row, col, team) {
         nbChoicePossible++;
       }
 
-      if (isAllowedToPlayBack(row, col, opposingTeam)) {
+      if (teamToMove === team && isAllowedToPlayBack(row, col, opposingTeam)) {
         const kingCase = $(document).find(`#case${nbCase}`);
 
         currentCase = kingCase;
