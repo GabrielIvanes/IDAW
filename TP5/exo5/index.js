@@ -1047,12 +1047,13 @@ function isAllowedToPlay(piece, row, col, team) {
         updateColorPossibleMoves();
       }
 
-      if (team === 1 && !isCheckingDanger) {
+      if (team === 1 && !isCheckingDanger && !isCaseInDanger(row, col, team)) {
         if (isQueenSideCastlingWhitePossible) {
           if (
-            chessBoard[0][1] === 0 &&
             chessBoard[0][2] === 0 &&
-            chessBoard[0][3] === 0
+            chessBoard[0][3] === 0 &&
+            !isCaseInDanger(0, 2, team) &&
+            !isCaseInDanger(0, 3, team)
           ) {
             const case2Left = $(document).find(`#case${row * 8 + (col - 2)}`);
             case2Left.css(
@@ -1064,7 +1065,12 @@ function isAllowedToPlay(piece, row, col, team) {
           }
         }
         if (isKingSideCastlingWhitePossible) {
-          if (chessBoard[0][5] === 0 && chessBoard[0][6] === 0) {
+          if (
+            chessBoard[0][5] === 0 &&
+            chessBoard[0][6] === 0 &&
+            !isCaseInDanger(0, 5, team) &&
+            !isCaseInDanger(0, 6, team)
+          ) {
             const case2Right = $(document).find(`#case${row * 8 + (col + 2)}`);
             case2Right.css(
               'background-color',
@@ -1074,12 +1080,17 @@ function isAllowedToPlay(piece, row, col, team) {
             possibleMoves.push(numberCase2Right);
           }
         }
-      } else if (team === 2 && !isCheckingDanger) {
+      } else if (
+        team === 2 &&
+        !isCheckingDanger &&
+        !isCaseInDanger(row, col, team)
+      ) {
         if (isQueenSideCastlingBlackPossible) {
           if (
-            chessBoard[7][1] === 0 &&
             chessBoard[7][2] === 0 &&
-            chessBoard[7][3] === 0
+            chessBoard[7][3] === 0 &&
+            !isCaseInDanger(7, 2, team) &&
+            !isCaseInDanger(7, 3, team)
           ) {
             const case2Left = $(document).find(`#case${row * 8 + (col - 2)}`);
             case2Left.css(
@@ -1091,7 +1102,12 @@ function isAllowedToPlay(piece, row, col, team) {
           }
         }
         if (isKingSideCastlingBlackPossible) {
-          if (chessBoard[7][5] === 0 && chessBoard[7][6] === 0) {
+          if (
+            chessBoard[7][5] === 0 &&
+            chessBoard[7][6] === 0 &&
+            !isCaseInDanger(7, 5, team) &&
+            !isCaseInDanger(7, 6, team)
+          ) {
             const case2Right = $(document).find(`#case${row * 8 + (col + 2)}`);
             case2Right.css(
               'background-color',
