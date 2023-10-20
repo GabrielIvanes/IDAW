@@ -1,9 +1,11 @@
 const table = $('#myTable').DataTable();
 
+const serverUrl = 'http://localhost/IDAW/TP4/exo5/api/user';
+
 async function getAllUser() {
   try {
     const response = await $.ajax({
-      url: 'http://localhost/IDAW/TP4/exo5/api/user/read.php',
+      url: `${serverUrl}/read.php`,
       method: 'GET',
       dataType: 'json',
     });
@@ -23,16 +25,9 @@ async function createTbody() {
       user.id,
       user.name,
       user.email,
-      `<form action='' class='update' onsubmit="onFormUpdate(event);">
-        <input class='idUpdate' type='hidden' value='${user.id}' />
-        <input class='nameUpdate' type='hidden' value='${user.name}' />
-        <input class='emailUpdate' type='hidden' value='${user.email}' />
-        <button type='submit'><i class='fas fa-edit icon'></i></button>
-      </form>
-      <form action='' class='delete' onsubmit="onFormDelete(event);">
-        <input name='idDelete' type='hidden' value='${user.id}' />
-        <button type='submit'><i class='fas fa-trash icon'></i></button>
-      </form>`,
+      `
+        <button onclick="onClickUpdate(event, ${user.id});"><i class='fas fa-edit icon'></i></button>
+        <button onclick="onClickDelete(event, ${user.id});"><i class='fas fa-trash icon'></i></button>`,
     ]);
   });
 
@@ -47,7 +42,7 @@ async function createUser(name, email) {
 
   try {
     await $.ajax({
-      url: 'http://localhost/IDAW/TP4/exo5/api/user/create.php',
+      url: `${serverUrl}/create.php`,
       method: 'POST',
       data: JSON.stringify(data),
       contentType: 'application/json',
@@ -68,7 +63,7 @@ async function deleteUser(id) {
 
   try {
     await $.ajax({
-      url: 'http://localhost/IDAW/TP4/exo5/api/user/delete.php',
+      url: `${serverUrl}/delete.php`,
       method: 'DELETE',
       data: JSON.stringify(data),
       contentType: 'application/json',
@@ -88,7 +83,7 @@ async function updateUser(id, name, email) {
 
   try {
     await $.ajax({
-      url: 'http://localhost/IDAW/TP4/exo5/api/user/update.php',
+      url: `${serverUrl}/update.php`,
       method: 'PUT',
       data: JSON.stringify(data),
       contentType: 'application/json',
@@ -103,36 +98,51 @@ async function updateUser(id, name, email) {
   }
 }
 
+async function getOneUser(id) {
+  try {
+    const response = await $.ajax({
+      url: `${serverUrl}/read_one.php?id=${id}`,
+      method: 'GET',
+      contentType: 'application/json',
+    });
+    return response;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 function onFormSubmit(event) {
   event.preventDefault();
-
+  let id = '';
   const name = $(inputName).val();
   const email = $(inputEmail).val();
+  const cookies = document.cookie.split(';');
+  for (cookie of cookies) {
+    const [key, value] = cookie.split('=');
+    if (key === 'idUpdate') {
+      id = value;
+    }
+  }
 
-  const id = window.localStorage.getItem('idUpdate');
-
-  if (id) {
-    updateUser(JSON.parse(id), name, email);
+  if (id !== '') {
+    updateUser(id, name, email);
     window.localStorage.clear('idUpdate');
   } else createUser(name, email);
   $(document).find('button.form-control').text('Submit');
 }
 
-function onFormDelete(event) {
+function onClickDelete(event, id) {
   event.preventDefault();
-
-  const id = $(event.target).parent().find('input').val();
   deleteUser(id);
 }
 
-function onFormUpdate(event) {
+async function onClickUpdate(event, id) {
   event.preventDefault();
 
-  const id = $(event.target).parent().find('.idUpdate').val();
-  const name = $(event.target).parent().find('.nameUpdate').val();
-  const email = $(event.target).parent().find('.emailUpdate').val();
+  document.cookie = `idUpdate=${id}`;
 
-  window.localStorage.setItem('idUpdate', JSON.parse(id));
+  const { _, name, email } = await getOneUser(id);
+
   $(document).find('button.form-control').text('Update');
   $(inputName).val(name);
   $(inputEmail).val(email);
