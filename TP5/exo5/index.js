@@ -10,6 +10,8 @@ let chessBoard = [
 ];
 
 let possibleMoves = [];
+let dangerPossibleMoves = [];
+let isCheckingDanger = false;
 let currentCase = '';
 
 let isKingSideCastlingWhitePossible = true; // petit roque blanc
@@ -29,7 +31,6 @@ function init_board() {
    * -6: roi
    */
 
-  console.log('init');
   chessBoard = [
     [12, 13, 14, 15, 16, 14, 13, 12],
     [11, 11, 11, 11, 11, 11, 11, 11],
@@ -68,11 +69,19 @@ function getPiece(chessBoardValue) {
   return chessBoardValue % 10;
 }
 
+function getRow(nbTh) {
+  return Math.floor(nbTh / 8);
+}
+
+function getCol(nbTh) {
+  return nbTh % 8;
+}
+
 function getNumberRowColOfTh(th) {
   const id = th[0] ? th[0].id : th.id;
   const numberTh = parseInt(id.slice(4, 6));
-  const row = Math.floor(numberTh / 8);
-  const col = numberTh % 8;
+  const row = getRow(numberTh);
+  const col = getCol(numberTh);
 
   return { numberTh, row, col };
 }
@@ -123,22 +132,18 @@ function handleClickTh(event) {
   const team = getTeam(chessBoardValue);
 
   console.log(
-    `numberTh: ${numberTh}, row: ${row}, col: ${col}, pièce: ${piece}`
+    `inHandleClickTh: numberTh: ${numberTh}, row: ${row}, col: ${col}, pièce: ${piece}, team:${team}`
   );
 
-  if (possibleMoves.length === 0) {
-    console.log(isAllowedToPlay(piece, row, col, team));
-  } else if (!possibleMoves.includes(numberTh)) {
-    currentCase = '';
-    possibleMoves = [];
-
-    console.log(isAllowedToPlay(piece, row, col, team));
-  } else {
+  if (possibleMoves.includes(numberTh)) {
     const {
       _,
       row: currentRow,
       col: currentCol,
     } = getNumberRowColOfTh(currentCase);
+
+    console.log(currentRow);
+    console.log(currentCol);
 
     currentPiece = getPiece(chessBoard[currentRow][currentCol]);
     currentTeam = getTeam(chessBoard[currentRow][currentCol]);
@@ -179,11 +184,28 @@ function handleClickTh(event) {
         isKingSideCastlingBlackPossible = false;
       }
     }
-
     currentCase = '';
     possibleMoves = [];
     display_board();
+  } else {
+    currentCase = '';
+    possibleMoves = [];
+    isAllowedToPlay(piece, row, col, team);
   }
+}
+
+function updateColorPossibleMoves() {
+  possibleMoves.forEach((possibleMove) => {
+    const casePossibleMove = $(document).find(`#case${possibleMove}`);
+    const rowPossibleMove = getRow(possibleMove);
+    const colPossibleMove = getCol(possibleMove);
+    casePossibleMove.css(
+      'background-color',
+      getPiece(chessBoard[rowPossibleMove][colPossibleMove]) === 0
+        ? 'grey'
+        : '#ff6b6b'
+    );
+  });
 }
 
 function isAllowedToPlayRight(row, col, opposingTeam) {
@@ -193,13 +215,9 @@ function isAllowedToPlayRight(row, col, opposingTeam) {
       (getPiece(chessBoard[row][col + 1]) !== 0 &&
         getTeam(chessBoard[row][col + 1]) === opposingTeam))
   ) {
-    const caseRight = $(document).find(`#case${row * 8 + (col + 1)}`);
-    caseRight.css(
-      'background-color',
-      getPiece(chessBoard[row][col + 1]) === 0 ? 'grey' : '#ff6b6b'
-    );
     const numberCaseRight = row * 8 + (col + 1);
-    possibleMoves.push(numberCaseRight);
+    if (isCheckingDanger) dangerPossibleMoves.push(numberCaseRight);
+    else possibleMoves.push(numberCaseRight);
 
     return true;
   } else {
@@ -214,13 +232,9 @@ function isAllowedToPlayLeft(row, col, opposingTeam) {
       (getPiece(chessBoard[row][col - 1]) !== 0 &&
         getTeam(chessBoard[row][col - 1]) === opposingTeam))
   ) {
-    const caseLeft = $(document).find(`#case${row * 8 + (col - 1)}`);
-    caseLeft.css(
-      'background-color',
-      getPiece(chessBoard[row][col - 1]) === 0 ? 'grey' : '#ff6b6b'
-    );
     const numberCaseLeft = row * 8 + (col - 1);
-    possibleMoves.push(numberCaseLeft);
+    if (isCheckingDanger) dangerPossibleMoves.push(numberCaseLeft);
+    else possibleMoves.push(numberCaseLeft);
     return true;
   } else {
     return false;
@@ -234,13 +248,9 @@ function isAllowedToPlayFront(row, col, opposingTeam) {
       (getPiece(chessBoard[row + 1][col]) !== 0 &&
         getTeam(chessBoard[row + 1][col]) === opposingTeam))
   ) {
-    const caseFront = $(document).find(`#case${(row + 1) * 8 + col}`);
-    caseFront.css(
-      'background-color',
-      getPiece(chessBoard[row + 1][col]) === 0 ? 'grey' : '#ff6b6b'
-    );
     const numberCaseFront = (row + 1) * 8 + col;
-    possibleMoves.push(numberCaseFront);
+    if (isCheckingDanger) dangerPossibleMoves.push(numberCaseFront);
+    else possibleMoves.push(numberCaseFront);
     return true;
   } else {
     return false;
@@ -254,13 +264,9 @@ function isAllowedToPlayBack(row, col, opposingTeam) {
       (getPiece(chessBoard[row - 1][col]) !== 0 &&
         getTeam(chessBoard[row - 1][col]) === opposingTeam))
   ) {
-    const caseBack = $(document).find(`#case${(row - 1) * 8 + col}`);
-    caseBack.css(
-      'background-color',
-      getPiece(chessBoard[row - 1][col]) === 0 ? 'grey' : '#ff6b6b'
-    );
     const numberCaseBack = (row - 1) * 8 + col;
-    possibleMoves.push(numberCaseBack);
+    if (isCheckingDanger) dangerPossibleMoves.push(numberCaseBack);
+    else possibleMoves.push(numberCaseBack);
     return true;
   } else {
     return false;
@@ -275,13 +281,9 @@ function isAllowedToPlayFrontLeft(row, col, opposingTeam) {
       (getPiece(chessBoard[row + 1][col - 1]) !== 0 &&
         getTeam(chessBoard[row + 1][col - 1]) === opposingTeam))
   ) {
-    const caseFrontLeft = $(document).find(`#case${(row + 1) * 8 + (col - 1)}`);
-    caseFrontLeft.css(
-      'background-color',
-      getPiece(chessBoard[row + 1][col - 1]) === 0 ? 'grey' : '#ff6b6b'
-    );
     const numberCaseFrontLeft = (row + 1) * 8 + (col - 1);
-    possibleMoves.push(numberCaseFrontLeft);
+    if (isCheckingDanger) dangerPossibleMoves.push(numberCaseFrontLeft);
+    else possibleMoves.push(numberCaseFrontLeft);
     return true;
   } else {
     return false;
@@ -296,15 +298,9 @@ function isAllowedToPlayFrontRight(row, col, opposingTeam) {
       (getPiece(chessBoard[row + 1][col + 1]) !== 0 &&
         getTeam(chessBoard[row + 1][col + 1]) === opposingTeam))
   ) {
-    const caseFrontRight = $(document).find(
-      `#case${(row + 1) * 8 + (col + 1)}`
-    );
-    caseFrontRight.css(
-      'background-color',
-      getPiece(chessBoard[row + 1][col + 1]) === 0 ? 'grey' : '#ff6b6b'
-    );
     const numberCaseFrontRight = (row + 1) * 8 + (col + 1);
-    possibleMoves.push(numberCaseFrontRight);
+    if (isCheckingDanger) dangerPossibleMoves.push(numberCaseFrontRight);
+    else possibleMoves.push(numberCaseFrontRight);
     return true;
   } else {
     return false;
@@ -319,13 +315,9 @@ function isAllowedToPlayBackLeft(row, col, opposingTeam) {
       (getPiece(chessBoard[row - 1][col - 1]) !== 0 &&
         getTeam(chessBoard[row - 1][col - 1]) === opposingTeam))
   ) {
-    const caseBackLeft = $(document).find(`#case${(row - 1) * 8 + (col - 1)}`);
-    caseBackLeft.css(
-      'background-color',
-      getPiece(chessBoard[row - 1][col - 1]) === 0 ? 'grey' : '#ff6b6b'
-    );
     const numberCaseBackLeft = (row - 1) * 8 + (col - 1);
-    possibleMoves.push(numberCaseBackLeft);
+    if (isCheckingDanger) dangerPossibleMoves.push(numberCaseBackLeft);
+    else possibleMoves.push(numberCaseBackLeft);
     return true;
   } else {
     return false;
@@ -340,13 +332,9 @@ function isAllowedToPlayBackRight(row, col, opposingTeam) {
       (getPiece(chessBoard[row - 1][col + 1]) !== 0 &&
         getTeam(chessBoard[row - 1][col + 1]) === opposingTeam))
   ) {
-    const caseBackRight = $(document).find(`#case${(row - 1) * 8 + (col + 1)}`);
-    caseBackRight.css(
-      'background-color',
-      getPiece(chessBoard[row - 1][col + 1]) === 0 ? 'grey' : '#ff6b6b'
-    );
     const numberCaseBackRight = (row - 1) * 8 + (col + 1);
-    possibleMoves.push(numberCaseBackRight);
+    if (isCheckingDanger) dangerPossibleMoves.push(numberCaseBackRight);
+    else possibleMoves.push(numberCaseBackRight);
     return true;
   } else {
     return false;
@@ -355,8 +343,9 @@ function isAllowedToPlayBackRight(row, col, opposingTeam) {
 
 function isAllowedToPlay(piece, row, col, team) {
   const opposingTeam = team === 1 ? 2 : 1;
-  currentCase = $(document).find(`#case${row * 8 + col}`);
-  if (chessBoard[row][col] !== 0) {
+
+  if (chessBoard[row][col] !== 0 && !isCheckingDanger) {
+    currentCase = $(document).find(`#case${row * 8 + col}`);
     currentCase.css('background-color', 'lightgrey');
   }
 
@@ -371,81 +360,93 @@ function isAllowedToPlay(piece, row, col, team) {
 
     case 1:
       if (team === 1) {
-        if (row < 7 && getPiece(chessBoard[row + 1][col]) === 0) {
+        if (
+          row < 7 &&
+          getPiece(chessBoard[row + 1][col]) === 0 &&
+          !isCheckingDanger
+        ) {
           // Si aucune pièce en face de lui
-          const caseFront = $(document).find(`#case${(row + 1) * 8 + col}`);
-          caseFront.css(
-            'background-color',
-            getPiece(chessBoard[row + 1][col]) === 0 ? 'grey' : '#ff6b6b'
-          );
+          // const caseFront = $(document).find(`#case${(row + 1) * 8 + col}`);
+          // caseFront.css(
+          //   'background-color',
+          //   getPiece(chessBoard[row + 1][col]) === 0 ? 'grey' : '#ff6b6b'
+          // );
           const numberCaseFront = (row + 1) * 8 + col;
-          possibleMoves.push(numberCaseFront);
+          if (isCheckingDanger) dangerPossibleMoves.push(numberCaseFront);
+          else possibleMoves.push(numberCaseFront);
           nbChoicePossible++;
         }
 
         if (
           row === 1 &&
           getPiece(chessBoard[row + 1][col]) === 0 &&
-          getPiece(chessBoard[row + 2][col]) === 0
+          getPiece(chessBoard[row + 2][col]) === 0 &&
+          !isCheckingDanger
         ) {
           // Si pion toujours à son point de départ
-          const case2Front = $(document).find(`#case${(row + 2) * 8 + col}`);
-          case2Front.css(
-            'background-color',
-            getPiece(chessBoard[row + 2][col]) === 0 ? 'grey' : '#ff6b6b'
-          );
+          // const case2Front = $(document).find(`#case${(row + 2) * 8 + col}`);
+          // case2Front.css(
+          //   'background-color',
+          //   getPiece(chessBoard[row + 2][col]) === 0 ? 'grey' : '#ff6b6b'
+          // );
           const numberCase2Front = (row + 2) * 8 + col;
-          possibleMoves.push(numberCase2Front);
+          if (isCheckingDanger) dangerPossibleMoves.push(numberCase2Front);
+          else possibleMoves.push(numberCase2Front);
           nbChoicePossible++;
         }
 
         if (
           col > 0 &&
           row < 7 &&
-          getPiece(chessBoard[row + 1][col - 1]) !== 0 &&
-          getTeam(chessBoard[row + 1][col - 1]) === opposingTeam
+          ((getPiece(chessBoard[row + 1][col - 1]) !== 0 &&
+            getTeam(chessBoard[row + 1][col - 1]) === opposingTeam) ||
+            isCheckingDanger)
         ) {
           // S'il y a une pièce devant lui à gauche de l'autre couleur
-          const caseFrontLeft = $(document).find(
-            `#case${(row + 1) * 8 + (col - 1)}`
-          );
-          caseFrontLeft.css(
-            'background-color',
-            getPiece(chessBoard[row + 1][col - 1]) === 0 ? 'grey' : '#ff6b6b'
-          );
+          // const caseFrontLeft = $(document).find(
+          //   `#case${(row + 1) * 8 + (col - 1)}`
+          // );
+          // caseFrontLeft.css(
+          //   'background-color',
+          //   getPiece(chessBoard[row + 1][col - 1]) === 0 ? 'grey' : '#ff6b6b'
+          // );
           const numberCaseFrontLeft = (row + 1) * 8 + (col - 1);
-          possibleMoves.push(numberCaseFrontLeft);
+          if (isCheckingDanger) dangerPossibleMoves.push(numberCaseFrontLeft);
+          else possibleMoves.push(numberCaseFrontLeft);
           nbChoicePossible++;
         }
 
         if (
           col < 7 &&
           row < 7 &&
-          getPiece(chessBoard[row + 1][col + 1]) !== 0 &&
-          getTeam(chessBoard[row + 1][col + 1]) === opposingTeam
+          ((getPiece(chessBoard[row + 1][col + 1]) !== 0 &&
+            getTeam(chessBoard[row + 1][col + 1]) === opposingTeam) ||
+            isCheckingDanger)
         ) {
           // S'il y a une pièce devant lui à droite de l'autre couleur
-          const caseFrontRight = $(document).find(
-            `#case${(row + 1) * 8 + (col + 1)}`
-          );
-          caseFrontRight.css(
-            'background-color',
-            getPiece(chessBoard[row + 1][col + 1]) === 0 ? 'grey' : '#ff6b6b'
-          );
+          // const caseFrontRight = $(document).find(
+          //   `#case${(row + 1) * 8 + (col + 1)}`
+          // );
+          // caseFrontRight.css(
+          //   'background-color',
+          //   getPiece(chessBoard[row + 1][col + 1]) === 0 ? 'grey' : '#ff6b6b'
+          // );
           const numberCaseFrontRight = (row + 1) * 8 + (col + 1);
-          possibleMoves.push(numberCaseFrontRight);
+          if (isCheckingDanger) dangerPossibleMoves.push(numberCaseFrontRight);
+          else possibleMoves.push(numberCaseFrontRight);
           nbChoicePossible++;
         }
       } else {
         if (row > 0 && getPiece(chessBoard[row - 1][col]) === 0) {
           // Si aucune pièce en face de lui
-          const caseFront = $(document).find(`#case${(row - 1) * 8 + col}`);
-          caseFront.css(
-            'background-color',
-            getPiece(chessBoard[row - 1][col]) === 0 ? 'grey' : '#ff6b6b'
-          );
+          // const caseFront = $(document).find(`#case${(row - 1) * 8 + col}`);
+          // caseFront.css(
+          //   'background-color',
+          //   getPiece(chessBoard[row - 1][col]) === 0 ? 'grey' : '#ff6b6b'
+          // );
           const numberCaseFront = (row - 1) * 8 + col;
-          possibleMoves.push(numberCaseFront);
+          if (isCheckingDanger) dangerPossibleMoves.push(numberCaseFront);
+          else possibleMoves.push(numberCaseFront);
           nbChoicePossible++;
         }
 
@@ -456,15 +457,16 @@ function isAllowedToPlay(piece, row, col, team) {
           getTeam(chessBoard[row - 1][col - 1]) === opposingTeam
         ) {
           // S'il y a une pièce devant lui à gauche de l'autre couleur
-          const caseFrontLeft = $(document).find(
-            `#case${(row - 1) * 8 + (col - 1)}`
-          );
-          caseFrontLeft.css(
-            'background-color',
-            getPiece(chessBoard[row - 1][col - 1]) === 0 ? 'grey' : '#ff6b6b'
-          );
+          // const caseFrontLeft = $(document).find(
+          //   `#case${(row - 1) * 8 + (col - 1)}`
+          // );
+          // caseFrontLeft.css(
+          //   'background-color',
+          //   getPiece(chessBoard[row - 1][col - 1]) === 0 ? 'grey' : '#ff6b6b'
+          // );
           const numberCaseFrontLeft = (row - 1) * 8 + (col - 1);
-          possibleMoves.push(numberCaseFrontLeft);
+          if (isCheckingDanger) dangerPossibleMoves.push(numberCaseFrontLeft);
+          else possibleMoves.push(numberCaseFrontLeft);
           nbChoicePossible++;
         }
 
@@ -474,13 +476,14 @@ function isAllowedToPlay(piece, row, col, team) {
           getPiece(chessBoard[row - 2][col]) === 0
         ) {
           // Si pion toujours à son point de départ
-          const case2Front = $(document).find(`#case${(row - 2) * 8 + col}`);
-          case2Front.css(
-            'background-color',
-            getPiece(chessBoard[row - 2][col]) === 0 ? 'grey' : '#ff6b6b'
-          );
+          // const case2Front = $(document).find(`#case${(row - 2) * 8 + col}`);
+          // case2Front.css(
+          //   'background-color',
+          //   getPiece(chessBoard[row - 2][col]) === 0 ? 'grey' : '#ff6b6b'
+          // );
           const numberCase2Front = (row - 2) * 8 + col;
-          possibleMoves.push(numberCase2Front);
+          if (isCheckingDanger) dangerPossibleMoves.push(numberCase2Front);
+          else possibleMoves.push(numberCase2Front);
           nbChoicePossible++;
         }
 
@@ -491,18 +494,22 @@ function isAllowedToPlay(piece, row, col, team) {
           getTeam(chessBoard[row - 1][col + 1]) === opposingTeam
         ) {
           // S'il y a une pièce devant lui à droite de l'autre couleur
-          const caseFrontRight = $(document).find(
-            `#case${(row - 1) * 8 + (col + 1)}`
-          );
-          caseFrontRight.css(
-            'background-color',
-            getPiece(chessBoard[row - 1][col + 1]) === 0 ? 'grey' : '#ff6b6b'
-          );
+          // const caseFrontRight = $(document).find(
+          //   `#case${(row - 1) * 8 + (col + 1)}`
+          // );
+          // caseFrontRight.css(
+          //   'background-color',
+          //   getPiece(chessBoard[row - 1][col + 1]) === 0 ? 'grey' : '#ff6b6b'
+          // );
           const numberCaseFrontRight = (row - 1) * 8 + (col + 1);
-          possibleMoves.push(numberCaseFrontRight);
+          if (isCheckingDanger) dangerPossibleMoves.push(numberCaseFrontRight);
+          else possibleMoves.push(numberCaseFrontRight);
           nbChoicePossible++;
         }
       }
+
+      updateColorPossibleMoves();
+
       if (nbChoicePossible > 0) return true;
       else return false;
 
@@ -547,6 +554,8 @@ function isAllowedToPlay(piece, row, col, team) {
       }
       row = pieceRow;
 
+      updateColorPossibleMoves();
+
       if (nbChoicePossible > 0) return true;
       else return false;
 
@@ -559,15 +568,16 @@ function isAllowedToPlay(piece, row, col, team) {
             getTeam(chessBoard[row + 2][col + 1]) === opposingTeam))
       ) {
         // Si déplacement possible 2 lignes devant lui à sa droite
-        const case2FrontRight = $(document).find(
-          `#case${(row + 2) * 8 + (col + 1)}`
-        );
-        case2FrontRight.css(
-          'background-color',
-          getPiece(chessBoard[row + 2][col + 1]) === 0 ? 'grey' : '#ff6b6b'
-        );
+        // const case2FrontRight = $(document).find(
+        //   `#case${(row + 2) * 8 + (col + 1)}`
+        // );
+        // case2FrontRight.css(
+        //   'background-color',
+        //   getPiece(chessBoard[row + 2][col + 1]) === 0 ? 'grey' : '#ff6b6b'
+        // );
         const numberCase2FrontRight = (row + 2) * 8 + (col + 1);
-        possibleMoves.push(numberCase2FrontRight);
+        if (isCheckingDanger) dangerPossibleMoves.push(numberCase2FrontRight);
+        else possibleMoves.push(numberCase2FrontRight);
         nbChoicePossible++;
       }
 
@@ -579,15 +589,16 @@ function isAllowedToPlay(piece, row, col, team) {
             getTeam(chessBoard[row + 2][col - 1]) === opposingTeam))
       ) {
         // Si déplacement possible 2 lignes devant lui à sa gauche
-        const case2FrontLeft = $(document).find(
-          `#case${(row + 2) * 8 + (col - 1)}`
-        );
-        case2FrontLeft.css(
-          'background-color',
-          getPiece(chessBoard[row + 2][col - 1]) === 0 ? 'grey' : '#ff6b6b'
-        );
+        // const case2FrontLeft = $(document).find(
+        //   `#case${(row + 2) * 8 + (col - 1)}`
+        // );
+        // case2FrontLeft.css(
+        //   'background-color',
+        //   getPiece(chessBoard[row + 2][col - 1]) === 0 ? 'grey' : '#ff6b6b'
+        // );
         const numberCase2FrontLeft = (row + 2) * 8 + (col - 1);
-        possibleMoves.push(numberCase2FrontLeft);
+        if (isCheckingDanger) dangerPossibleMoves.push(numberCase2FrontLeft);
+        else possibleMoves.push(numberCase2FrontLeft);
         nbChoicePossible++;
       }
 
@@ -599,15 +610,16 @@ function isAllowedToPlay(piece, row, col, team) {
             getTeam(chessBoard[row - 2][col + 1]) === opposingTeam))
       ) {
         // Si déplacement possible 2 lignes derrière lui à sa droite
-        const case2BackRight = $(document).find(
-          `#case${(row - 2) * 8 + (col + 1)}`
-        );
-        case2BackRight.css(
-          'background-color',
-          getPiece(chessBoard[row - 2][col + 1]) === 0 ? 'grey' : '#ff6b6b'
-        );
+        // const case2BackRight = $(document).find(
+        //   `#case${(row - 2) * 8 + (col + 1)}`
+        // );
+        // case2BackRight.css(
+        //   'background-color',
+        //   getPiece(chessBoard[row - 2][col + 1]) === 0 ? 'grey' : '#ff6b6b'
+        // );
         const numberCase2BackRight = (row - 2) * 8 + (col + 1);
-        possibleMoves.push(numberCase2BackRight);
+        if (isCheckingDanger) dangerPossibleMoves.push(numberCase2BackRight);
+        else possibleMoves.push(numberCase2BackRight);
         nbChoicePossible++;
       }
 
@@ -619,15 +631,16 @@ function isAllowedToPlay(piece, row, col, team) {
             getTeam(chessBoard[row - 2][col - 1]) === opposingTeam))
       ) {
         // Si déplacement possible 2 lignes derrière lui à sa gauche
-        const case2backLeft = $(document).find(
-          `#case${(row - 2) * 8 + (col - 1)}`
-        );
-        case2backLeft.css(
-          'background-color',
-          getPiece(chessBoard[row - 2][col - 1]) === 0 ? 'grey' : '#ff6b6b'
-        );
+        // const case2backLeft = $(document).find(
+        //   `#case${(row - 2) * 8 + (col - 1)}`
+        // );
+        // case2backLeft.css(
+        //   'background-color',
+        //   getPiece(chessBoard[row - 2][col - 1]) === 0 ? 'grey' : '#ff6b6b'
+        // );
         const numberCase2BackLeft = (row - 2) * 8 + (col - 1);
-        possibleMoves.push(numberCase2BackLeft);
+        if (isCheckingDanger) dangerPossibleMoves.push(numberCase2BackLeft);
+        else possibleMoves.push(numberCase2BackLeft);
         nbChoicePossible++;
       }
 
@@ -639,15 +652,16 @@ function isAllowedToPlay(piece, row, col, team) {
             getTeam(chessBoard[row + 1][col + 2]) === opposingTeam))
       ) {
         // Si déplacement possible devant lui 2 case à droite
-        const caseFront2Right = $(document).find(
-          `#case${(row + 1) * 8 + (col + 2)}`
-        );
-        caseFront2Right.css(
-          'background-color',
-          getPiece(chessBoard[row + 1][col + 2]) === 0 ? 'grey' : '#ff6b6b'
-        );
+        // const caseFront2Right = $(document).find(
+        //   `#case${(row + 1) * 8 + (col + 2)}`
+        // );
+        // caseFront2Right.css(
+        //   'background-color',
+        //   getPiece(chessBoard[row + 1][col + 2]) === 0 ? 'grey' : '#ff6b6b'
+        // );
         const numberCaseFront2Right = (row + 1) * 8 + (col + 2);
-        possibleMoves.push(numberCaseFront2Right);
+        if (isCheckingDanger) dangerPossibleMoves.push(numberCaseFront2Right);
+        else possibleMoves.push(numberCaseFront2Right);
         nbChoicePossible++;
       }
 
@@ -659,15 +673,16 @@ function isAllowedToPlay(piece, row, col, team) {
             getTeam(chessBoard[row - 1][col + 2]) === opposingTeam))
       ) {
         // Si déplacement possible derrière lui 2 case à droite
-        const caseBack2Right = $(document).find(
-          `#case${(row - 1) * 8 + (col + 2)}`
-        );
-        caseBack2Right.css(
-          'background-color',
-          getPiece(chessBoard[row - 1][col + 2]) === 0 ? 'grey' : '#ff6b6b'
-        );
+        // const caseBack2Right = $(document).find(
+        //   `#case${(row - 1) * 8 + (col + 2)}`
+        // );
+        // caseBack2Right.css(
+        //   'background-color',
+        //   getPiece(chessBoard[row - 1][col + 2]) === 0 ? 'grey' : '#ff6b6b'
+        // );
         const numberCaseBack2Right = (row - 1) * 8 + (col + 2);
-        possibleMoves.push(numberCaseBack2Right);
+        if (isCheckingDanger) dangerPossibleMoves.push(numberCaseBack2Right);
+        else possibleMoves.push(numberCaseBack2Right);
         nbChoicePossible++;
       }
 
@@ -679,15 +694,16 @@ function isAllowedToPlay(piece, row, col, team) {
             getTeam(chessBoard[row + 1][col - 2]) === opposingTeam))
       ) {
         // Si déplacement possible devant lui 2 case à gauche
-        const caseFront2Left = $(document).find(
-          `#case${(row + 1) * 8 + (col - 2)}`
-        );
-        caseFront2Left.css(
-          'background-color',
-          getPiece(chessBoard[row + 1][col - 2]) === 0 ? 'grey' : '#ff6b6b'
-        );
+        // const caseFront2Left = $(document).find(
+        //   `#case${(row + 1) * 8 + (col - 2)}`
+        // );
+        // caseFront2Left.css(
+        //   'background-color',
+        //   getPiece(chessBoard[row + 1][col - 2]) === 0 ? 'grey' : '#ff6b6b'
+        // );
         const numberCaseFront2Left = (row + 1) * 8 + (col - 2);
-        possibleMoves.push(numberCaseFront2Left);
+        if (isCheckingDanger) dangerPossibleMoves.push(numberCaseFront2Left);
+        else possibleMoves.push(numberCaseFront2Left);
         nbChoicePossible++;
       }
 
@@ -699,17 +715,20 @@ function isAllowedToPlay(piece, row, col, team) {
             getTeam(chessBoard[row - 1][col - 2]) === opposingTeam))
       ) {
         // Si déplacement possible derrière lui 2 case à gauche
-        const caseBack2Left = $(document).find(
-          `#case${(row - 1) * 8 + (col - 2)}`
-        );
-        caseBack2Left.css(
-          'background-color',
-          getPiece(chessBoard[row - 1][col - 2]) === 0 ? 'grey' : '#ff6b6b'
-        );
+        // const caseBack2Left = $(document).find(
+        //   `#case${(row - 1) * 8 + (col - 2)}`
+        // );
+        // caseBack2Left.css(
+        //   'background-color',
+        //   getPiece(chessBoard[row - 1][col - 2]) === 0 ? 'grey' : '#ff6b6b'
+        // );
         const numberCaseBack2Left = (row - 1) * 8 + (col - 2);
-        possibleMoves.push(numberCaseBack2Left);
+        if (isCheckingDanger) dangerPossibleMoves.push(numberCaseBack2Left);
+        else possibleMoves.push(numberCaseBack2Left);
         nbChoicePossible++;
       }
+
+      updateColorPossibleMoves();
 
       if (nbChoicePossible > 0) return true;
       else return false;
@@ -771,6 +790,8 @@ function isAllowedToPlay(piece, row, col, team) {
       }
       row = pieceRow;
       col = pieceCol;
+
+      updateColorPossibleMoves();
 
       if (nbChoicePossible > 0) return true;
       else return false;
@@ -871,21 +892,137 @@ function isAllowedToPlay(piece, row, col, team) {
       row = pieceRow;
       col = pieceCol;
 
+      updateColorPossibleMoves();
+
       if (nbChoicePossible > 0) return true;
       else return false;
 
     case 6:
-      if (isAllowedToPlayFrontRight(row, col, opposingTeam)) nbChoicePossible++;
-      if (isAllowedToPlayFrontLeft(row, col, opposingTeam)) nbChoicePossible++;
-      if (isAllowedToPlayBackRight(row, col, opposingTeam)) nbChoicePossible++;
-      if (isAllowedToPlayBackLeft(row, col, opposingTeam)) nbChoicePossible++;
+      const nbCase = row * 8 + col;
 
-      if (isAllowedToPlayRight(row, col, opposingTeam)) nbChoicePossible++;
-      if (isAllowedToPlayLeft(row, col, opposingTeam)) nbChoicePossible++;
-      if (isAllowedToPlayFront(row, col, opposingTeam)) nbChoicePossible++;
-      if (isAllowedToPlayBack(row, col, opposingTeam)) nbChoicePossible++;
+      if (isAllowedToPlayFrontRight(row, col, opposingTeam)) {
+        const kingCase = $(document).find(`#case${nbCase}`);
 
-      if (team === 1) {
+        currentCase = kingCase;
+
+        const numberFrontRight = (row + 1) * 8 + (col + 1);
+        if (isCheckingDanger) dangerPossibleMoves.push(numberFrontRight);
+        else
+          !possibleMoves.includes(numberFrontRight) &&
+            possibleMoves.push(numberFrontRight);
+        nbChoicePossible++;
+      }
+
+      if (isAllowedToPlayFrontLeft(row, col, opposingTeam)) {
+        const kingCase = $(document).find(`#case${nbCase}`);
+
+        currentCase = kingCase;
+
+        const numberFrontLeft = (row + 1) * 8 + (col - 1);
+        if (isCheckingDanger) dangerPossibleMoves.push(numberFrontLeft);
+        else
+          !possibleMoves.includes(numberFrontLeft) &&
+            possibleMoves.push(numberFrontLeft);
+        nbChoicePossible++;
+      }
+
+      if (isAllowedToPlayBackRight(row, col, opposingTeam)) {
+        const kingCase = $(document).find(`#case${nbCase}`);
+
+        currentCase = kingCase;
+
+        const numberBackRight = (row - 1) * 8 + (col + 1);
+        if (isCheckingDanger) dangerPossibleMoves.push(numberBackRight);
+        else
+          !possibleMoves.includes(numberBackRight) &&
+            possibleMoves.push(numberBackRight);
+        nbChoicePossible++;
+      }
+
+      if (isAllowedToPlayBackLeft(row, col, opposingTeam)) {
+        const kingCase = $(document).find(`#case${nbCase}`);
+
+        currentCase = kingCase;
+
+        const numberBackLeft = (row - 1) * 8 + (col - 1);
+        if (isCheckingDanger) dangerPossibleMoves.push(numberBackLeft);
+        else
+          !possibleMoves.includes(numberBackLeft) &&
+            possibleMoves.push(numberBackLeft);
+        nbChoicePossible++;
+      }
+
+      if (isAllowedToPlayRight(row, col, opposingTeam)) {
+        const kingCase = $(document).find(`#case${nbCase}`);
+
+        currentCase = kingCase;
+
+        const numberRight = row * 8 + (col + 1);
+        if (isCheckingDanger) dangerPossibleMoves.push(numberRight);
+        else
+          !possibleMoves.includes(numberRight) &&
+            possibleMoves.push(numberRight);
+        nbChoicePossible++;
+      }
+
+      if (isAllowedToPlayLeft(row, col, opposingTeam)) {
+        const kingCase = $(document).find(`#case${nbCase}`);
+
+        currentCase = kingCase;
+
+        const numberLeft = row * 8 + (col - 1);
+        if (isCheckingDanger) dangerPossibleMoves.push(numberLeft);
+        else
+          !possibleMoves.includes(numberLeft) && possibleMoves.push(numberLeft);
+        nbChoicePossible++;
+      }
+
+      if (isAllowedToPlayFront(row, col, opposingTeam)) {
+        const kingCase = $(document).find(`#case${nbCase}`);
+
+        currentCase = kingCase;
+
+        const numberFront = (row + 1) * 8 + col;
+        if (isCheckingDanger) dangerPossibleMoves.push(numberFront);
+        else
+          !possibleMoves.includes(numberFront) &&
+            possibleMoves.push(numberFront);
+        nbChoicePossible++;
+      }
+
+      if (isAllowedToPlayBack(row, col, opposingTeam)) {
+        const kingCase = $(document).find(`#case${nbCase}`);
+
+        currentCase = kingCase;
+
+        const numberBack = (row - 1) * 8 + col;
+        if (isCheckingDanger) dangerPossibleMoves.push(numberBack);
+        else
+          !possibleMoves.includes(numberBack) && possibleMoves.push(numberBack);
+        nbChoicePossible++;
+      }
+      console.log(possibleMoves);
+      if (!isCheckingDanger) {
+        possibleMoves = possibleMoves.filter((possibleMove) => {
+          console.log('ok');
+          console.log(
+            isCaseInDanger(getRow(possibleMove), getCol(possibleMove), team)
+          );
+          if (
+            !isCaseInDanger(getRow(possibleMove), getCol(possibleMove), team)
+          ) {
+            return possibleMove;
+          }
+        });
+        const kingCase = $(document).find(`#case${nbCase}`);
+        currentCase = kingCase;
+        console.log(possibleMoves);
+        setColorBoardDefault();
+        kingCase.css('background-color', 'lightgrey');
+        updateColorPossibleMoves();
+      }
+
+      if (team === 1 && !isCheckingDanger) {
         if (isQueenSideCastlingWhitePossible) {
           if (
             chessBoard[0][1] === 0 &&
@@ -912,7 +1049,7 @@ function isAllowedToPlay(piece, row, col, team) {
             possibleMoves.push(numberCase2Right);
           }
         }
-      } else if (team === 2) {
+      } else if (team === 2 && !isCheckingDanger) {
         if (isQueenSideCastlingBlackPossible) {
           if (
             chessBoard[7][1] === 0 &&
@@ -941,9 +1078,45 @@ function isAllowedToPlay(piece, row, col, team) {
         }
       }
 
-      if (nbChoicePossible > 0) return true;
-      else return false;
+      if (nbChoicePossible > 0) {
+        console.log(`possibleMoves: ${possibleMoves}`);
+        console.log(`nbChoicePossible: ${nbChoicePossible}`);
+        return true;
+      } else return false;
   }
+}
+
+function isCaseInDanger(rowCase, colCase, team) {
+  isCheckingDanger = true;
+  dangerPossibleMoves = [];
+  console.log(`row: ${rowCase}, col: ${colCase}, team: ${team}`);
+  const opposingTeam = team === 1 ? 2 : 1;
+  const nbCase = rowCase * 8 + colCase;
+  console.log(`nbCase: ${nbCase}`);
+
+  for (let i = 0; i < 8; i++) {
+    for (let j = 0; j < 8; j++) {
+      if (
+        getPiece(chessBoard[i][j]) !== 0 &&
+        getPiece(chessBoard[i][j] !== 6)
+      ) {
+        if (getTeam(chessBoard[i][j]) === opposingTeam) {
+          console.log(`pièce checkée: ${chessBoard[i][j]}`);
+          if (isAllowedToPlay(getPiece(chessBoard[i][j]), i, j, opposingTeam)) {
+            console.log(possibleMoves);
+            if (dangerPossibleMoves.includes(nbCase)) {
+              isCheckingDanger = false;
+              return true;
+            } else {
+              dangerPossibleMoves = [];
+            }
+          }
+        }
+      }
+    }
+  }
+  isCheckingDanger = false;
+  return false;
 }
 
 $(document).ready(function () {
